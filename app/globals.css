@@ -1,0 +1,99 @@
+@import "tailwindcss";
+
+/* ─────────────────────────────────────────────────────────────
+   Sistema de diseño — Petshop
+   Los tokens salen del template de Figma "Petshop": naranja
+   #FD7E14 sobre gris #F8F9FA y negro puro. Todo el color vive
+   acá; cambiás estos valores y cambia la tienda entera.
+   ───────────────────────────────────────────────────────────── */
+@theme {
+  /* Marca — Orange/500 del template, con su escala derivada */
+  --color-brand-50: #fff5eb;
+  --color-brand-100: #ffe6cc;
+  --color-brand-200: #fecb99;
+  --color-brand-300: #feae63;
+  --color-brand-400: #fd943a;
+  --color-brand-500: #fd7e14;
+  --color-brand-600: #e56b06;
+  --color-brand-700: #b85405;
+
+  /* Neutros — el diseño se apoya en negro puro sobre gris muy claro */
+  --color-ink: #000000;
+  --color-ink-body: rgba(0, 0, 0, 0.8);
+  --color-ink-soft: rgba(0, 0, 0, 0.6);
+  --color-ink-faint: rgba(0, 0, 0, 0.35);
+
+  /* Superficies — Gray/100 es el fondo de página y de las fotos */
+  --color-surface: #f8f9fa;
+  --color-surface-2: #f1f3f5;
+  --color-line: #ececee;
+
+  /* Estado — el template no los define, se agregan mínimos */
+  --color-success: #1a9f5c;
+  --color-danger: #e03131;
+  --color-whatsapp: #25d366;
+
+  /* Tipografías: Poppins para UI y títulos, Inter para lectura */
+  --font-display: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+
+  /* Radios del template */
+  --radius-btn: 12px;
+  --radius-card: 20px;
+  --radius-pill: 40px;
+
+  /* La barra flotante del header */
+  --shadow-pill: 0 16px 6px rgba(0, 0, 0, 0.03);
+  /* Barra flotante al hacer scroll: despega la pildora del contenido */
+  --shadow-float: 0 10px 30px -12px rgba(0, 0, 0, 0.28);
+
+  --animate-pop: pop 0.28s ease-out;
+}
+
+@keyframes pop {
+  0% {
+    transform: scale(1);
+  }
+  45% {
+    transform: scale(1.18);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--color-surface);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Carruseles horizontales sin barra de scroll visible */
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Aire abajo en mobile para la nav flotante */
+@media (max-width: 767px) {
+  body {
+    padding-bottom: 5.5rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
