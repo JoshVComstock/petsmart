@@ -57,6 +57,100 @@ export interface StoreClient {
   emailVerified: boolean;
 }
 
+export type GroomingTypeKey = "BASIC" | "PREMIUM" | "PLUS_PREMIUM";
+export type SizeKey = "SMALL" | "MEDIUM" | "LARGE";
+
+export interface GroomingPrice {
+  serviceId: number;
+  size: SizeKey;
+  price: number;
+}
+
+export interface GroomingPackage {
+  type: GroomingTypeKey;
+  title: string;
+  tagline: string | null;
+  photo: string | null;
+  sortOrder: number;
+  description: string;
+  fromPrice: number;
+  prices: GroomingPrice[];
+}
+
+export interface GroomingExtra {
+  id: number;
+  name: string;
+  price: number;
+  description: string | null;
+  photo: string | null;
+}
+
+export interface GroomingSchedule {
+  openHour: number;
+  closeHour: number;
+  slotMinutes: number;
+  workdays: number[];
+  minHoursAhead: number;
+  maxDaysAhead: number;
+}
+
+export interface GroomingCatalog {
+  packages: GroomingPackage[];
+  extras: GroomingExtra[];
+  branch: Branch | null;
+  schedule: GroomingSchedule;
+}
+
+export interface GroomingSlot {
+  time: string;
+  startsAt: string;
+  available: boolean;
+  reason: string | null;
+}
+
+export interface Availability {
+  date: string;
+  slots: GroomingSlot[];
+  reason?: string;
+}
+
+export type PetSpecies =
+  | "DOG" | "CAT" | "BIRD" | "FISH" | "RODENT" | "RABBIT" | "REPTILE" | "OTHER";
+
+export interface Pet {
+  id: number;
+  name: string;
+  breed: string | null;
+  size: SizeKey | null;
+  species: PetSpecies | null;
+  sex: "MALE" | "FEMALE" | "UNKNOWN" | null;
+  birthDate: string | null;
+  weightKg: number | null;
+  isNeutered: boolean | null;
+  activity: "LOW" | "MODERATE" | "HIGH" | null;
+  bodyCondition: "UNDERWEIGHT" | "IDEAL" | "OVERWEIGHT" | null;
+  allergies: string | null;
+  healthNotes: string | null;
+  dietNotes: string | null;
+  description: string | null;
+  photo: string | null;
+  ageMonths: number | null;
+}
+
+export interface Appointment {
+  id: number;
+  scheduledAt: string;
+  status: "PENDING" | "CONFIRMED" | "DONE" | "CANCELLED" | "NO_SHOW";
+  estimatedPrice: number | null;
+  notes: string | null;
+  durationMin: number;
+  upcoming: boolean;
+  pet: { id: number; name: string; breed: string | null; photo: string | null } | null;
+  branch: { id: number; name: string; address: string; phone: string } | null;
+  service: { id: number; type: GroomingTypeKey; size: SizeKey; price: string; description: string } | null;
+  extras: { id: number; name: string; price: number }[];
+}
+
 export interface Address {
   id: number;
   label: string;

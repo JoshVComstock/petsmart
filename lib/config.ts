@@ -45,8 +45,15 @@ export const NAV_LINKS = [
   { href: "/", label: "Inicio" },
   { href: "/productos", label: "Productos" },
   { href: "/ofertas", label: "Ofertas" },
+  { href: "/peluqueria", label: "Peluquería" },
   { href: "/sucursales", label: "Sucursales" },
 ] as const;
+
+export const SIZE_LABELS: Record<"SMALL" | "MEDIUM" | "LARGE", string> = {
+  SMALL: "Pequeño",
+  MEDIUM: "Mediano",
+  LARGE: "Grande",
+};
 
 export const PET_TYPES = [
   { label: "Perros", search: "perro", image: "/templateimage/perros.jpeg" },

@@ -11,11 +11,15 @@ import {
   IconPackage,
   IconUser,
   IconArrowRight,
+  IconScissors,
+  IconPaw,
 } from "@/components/ui/icons";
 
 const LINKS = [
   { href: "/cuenta", label: "Resumen", Icon: IconGrid },
   { href: "/cuenta/pedidos", label: "Mis pedidos", Icon: IconPackage },
+  { href: "/cuenta/mascotas", label: "Mis mascotas", Icon: IconPaw },
+  { href: "/cuenta/turnos", label: "Mis turnos", Icon: IconScissors },
   { href: "/cuenta/favoritos", label: "Favoritos", Icon: IconHeart },
   { href: "/cuenta/ubicaciones", label: "Ubicaciones", Icon: IconMapPin },
   { href: "/cuenta/perfil", label: "Mis datos", Icon: IconUser },

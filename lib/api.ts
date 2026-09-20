@@ -1,5 +1,12 @@
 import { API_URL } from "./config";
-import type { Branch, Category, Product, ProductFilters } from "./types";
+import type {
+  Availability,
+  Branch,
+  Category,
+  GroomingCatalog,
+  Product,
+  ProductFilters,
+} from "./types";
 
 /**
  * Cliente del API público. Se usa desde Server Components,
@@ -46,3 +53,19 @@ export const getProduct = (id: string | number) =>
 export const getCategories = () => request<Category[]>("/categories", []);
 
 export const getBranches = () => request<Branch[]>("/branches", []);
+
+const CATALOGO_VACIO: GroomingCatalog = {
+  packages: [],
+  extras: [],
+  branch: null,
+  schedule: {
+    openHour: 9, closeHour: 16, slotMinutes: 60,
+    workdays: [1, 2, 3, 4, 5], minHoursAhead: 5, maxDaysAhead: 30,
+  },
+};
+
+export const getGroomingCatalog = (): Promise<GroomingCatalog> =>
+  request<GroomingCatalog>("/grooming/services", CATALOGO_VACIO);
+
+export const getAvailability = (date: string): Promise<Availability> =>
+  request<Availability>(`/grooming/availability?date=${date}`, { date, slots: [] });
