@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/Button";
 import { PawPattern } from "@/components/ui/PawPattern";
 import { ProductImage } from "@/components/product/ProductImage";
 import { STORE } from "@/lib/config";
-import type { Product } from "@/lib/types";
+import type { CatalogItem } from "@/lib/types";
 
 /**
  * Portada del template: texto a la izquierda y, a la derecha, las manchas
@@ -18,8 +18,8 @@ const SPOTS = [
   "bottom-[10%] left-[32%] w-[34%]",
 ] as const;
 
-export const Hero = ({ products = [] }: { products?: Product[] }) => (
-  <section className="relative overflow-hidden bg-surface px-4 md:px-8 lg:px-[72px]">
+export const Hero = ({ products = [] }: { products?: CatalogItem[] }) => (
+  <section className="bajo-header relative overflow-hidden bg-surface px-4 md:px-8 lg:px-[72px]">
     <div className="mx-auto grid max-w-[1296px] items-center gap-10 py-10 md:py-14 lg:grid-cols-2 lg:gap-16 lg:py-20">
       {/* Texto */}
       <div className="relative z-10 flex flex-col items-start gap-5 md:gap-[45px]">

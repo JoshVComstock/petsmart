@@ -1,8 +1,9 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { apiPost } from "@/lib/store-api";
 import { getSession } from "@/lib/session";
-import { buildWhatsAppOrder } from "@/lib/whatsapp";
+import { buildWhatsAppOrder, type PaymentChoice } from "@/lib/whatsapp";
 import type { CartLine } from "@/lib/cart-store";
 import { field } from "./types";
 
@@ -29,6 +30,9 @@ interface OrderResponse {
   code: string;
   subtotal: number;
 }
+
+const etiquetaPago = (payment: PaymentChoice) =>
+  payment === "qr" ? "Paga por QR" : "Paga al retirar";
 
 export const createOrderAction = async (
   _prev: CheckoutState,
@@ -62,6 +66,10 @@ export const createOrderAction = async (
   const branchId = Number(form.get("branchId")) || null;
   const branchName = field(form, "branchName");
 
+  // El delivery se paga por adelantado; el retiro puede pagarse en la tienda.
+  const payment: PaymentChoice =
+    !isPickup || field(form, "payment") === "qr" ? "qr" : "on_pickup";
+
   if (!name || !phone) {
     return { ok: false, message: "Dejanos tu nombre y teléfono para poder contactarte" };
   }
@@ -75,7 +83,8 @@ export const createOrderAction = async (
     })),
     ...(session ? {} : { guestName: name, guestPhone: phone }),
     ...(isPickup ? { branchId } : { address, reference }),
-    notes,
+    // El pago viaja en la nota: así lo ve el mostrador sin tocar el esquema.
+    notes: [notes, etiquetaPago(payment)].filter(Boolean).join(" · "),
   });
 
   if (!result.ok || !result.data) {
@@ -94,6 +103,7 @@ export const createOrderAction = async (
       address,
       reference,
       branchName,
+      payment,
       notes,
     },
     subtotal
@@ -104,5 +114,68 @@ export const createOrderAction = async (
     message: `Pedido ${result.data.code} registrado`,
     code: result.data.code,
     whatsappUrl,
+  };
+};
+
+/**
+ * Pedido hecho desde la cuenta.
+ *
+ * Acá no se abre WhatsApp: la persona ya está identificada, el pedido queda
+ * registrado en el sistema y se confirma en pantalla con su código. Avisar
+ * por el chat pasa a ser algo opcional, no el camino obligado.
+ */
+export const confirmAccountOrderAction = async (
+  _prev: CheckoutState,
+  form: FormData
+): Promise<CheckoutState> => {
+  const session = await getSession();
+  if (!session) return { ok: false, message: "Tenés que ingresar para hacer el pedido" };
+
+  let lines: CartLine[] = [];
+  try {
+    lines = JSON.parse(String(form.get("lines") ?? "[]")) as CartLine[];
+  } catch {
+    return { ok: false, message: "No pudimos leer tu carrito. Recargá la página." };
+  }
+
+  if (lines.length === 0) return { ok: false, message: "Tu carrito está vacío" };
+
+  const isPickup = field(form, "method") === "PICKUP";
+  const payment: PaymentChoice =
+    !isPickup || field(form, "payment") === "qr" ? "qr" : "on_pickup";
+
+  const notes = field(form, "notes");
+  const branchId = Number(form.get("branchId")) || null;
+
+  if (isPickup && !branchId) {
+    return { ok: false, message: "Elegí en qué sucursal lo vas a retirar" };
+  }
+
+  const address = field(form, "address");
+  if (!isPickup && !address) {
+    return { ok: false, message: "Elegí o escribí la dirección de entrega" };
+  }
+
+  const result = await apiPost<OrderResponse>("/orders", {
+    method: isPickup ? "PICKUP" : "DELIVERY",
+    items: lines.map((line) => ({
+      productId: line.productId,
+      quantity: line.quantity,
+      branchId: line.branchId,
+    })),
+    ...(isPickup ? { branchId } : { address, reference: field(form, "reference") }),
+    notes: [notes, etiquetaPago(payment)].filter(Boolean).join(" · "),
+  });
+
+  if (!result.ok || !result.data) {
+    return { ok: false, message: result.message };
+  }
+
+  revalidatePath("/cuenta/pedidos");
+
+  return {
+    ok: true,
+    message: `Pedido ${result.data.code} registrado`,
+    code: result.data.code,
   };
 };

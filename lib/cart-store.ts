@@ -1,4 +1,4 @@
-import type { Product } from "./types";
+import type { Comprable } from "./types";
 
 /**
  * Carrito con un store externo + useSyncExternalStore.
@@ -62,7 +62,7 @@ export const cartStore = {
   getSnapshot: () => state,
   getServerSnapshot: () => EMPTY,
 
-  add: (product: Product, quantity = 1, branchId?: number) => {
+  add: (product: Comprable, quantity = 1, branchId?: number) => {
     const branch =
       product.branches.find((b) => b.id === branchId) ?? product.branches[0] ?? null;
 

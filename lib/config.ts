@@ -31,6 +31,14 @@ export const STORE = {
 export const API_URL =
   process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3000/api";
 
+/**
+ * Dominio público. Lo necesita Next para armar las URL absolutas de las
+ * vistas previas: sin esto, al compartir un link por WhatsApp la imagen
+ * no carga porque viaja como ruta relativa.
+ */
+export const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.petsmartbolivia.com";
+
 export const CONTACT = {
   phone: DEFAULT_BRANCH.phone,
   phoneLabel: `+591 ${DEFAULT_BRANCH.phone}`,
@@ -45,8 +53,15 @@ export const NAV_LINKS = [
   { href: "/", label: "Inicio" },
   { href: "/productos", label: "Productos" },
   { href: "/ofertas", label: "Ofertas" },
+  { href: "/peluqueria", label: "Peluquería" },
   { href: "/sucursales", label: "Sucursales" },
 ] as const;
+
+export const SIZE_LABELS: Record<"SMALL" | "MEDIUM" | "LARGE", string> = {
+  SMALL: "Pequeño",
+  MEDIUM: "Mediano",
+  LARGE: "Grande",
+};
 
 export const PET_TYPES = [
   { label: "Perros", search: "perro", image: "/templateimage/perros.jpeg" },

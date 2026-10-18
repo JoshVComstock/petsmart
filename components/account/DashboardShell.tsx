@@ -11,11 +11,15 @@ import {
   IconPackage,
   IconUser,
   IconArrowRight,
+  IconScissors,
+  IconPaw,
 } from "@/components/ui/icons";
 
 const LINKS = [
   { href: "/cuenta", label: "Resumen", Icon: IconGrid },
   { href: "/cuenta/pedidos", label: "Mis pedidos", Icon: IconPackage },
+  { href: "/cuenta/mascotas", label: "Mis mascotas", Icon: IconPaw },
+  { href: "/cuenta/turnos", label: "Mis turnos", Icon: IconScissors },
   { href: "/cuenta/favoritos", label: "Favoritos", Icon: IconHeart },
   { href: "/cuenta/ubicaciones", label: "Ubicaciones", Icon: IconMapPin },
   { href: "/cuenta/perfil", label: "Mis datos", Icon: IconUser },
@@ -33,11 +37,16 @@ export const DashboardShell = ({ name, email, children, banner, logout }: Props)
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
 
-  const activeLabel = LINKS.find((link) => link.href === pathname)?.label ?? "Mi cuenta";
+  // El más específico primero: /cuenta/turnos/reservar sigue siendo "Mis turnos".
+  const activo = [...LINKS]
+    .sort((a, b) => b.href.length - a.href.length)
+    .find((link) => pathname === link.href || pathname.startsWith(`${link.href}/`));
+
+  const activeLabel = activo?.label ?? "Mi cuenta";
 
   const navLinks = (onNavigate?: () => void) =>
     LINKS.map(({ href, label, Icon }) => {
-      const active = pathname === href;
+      const active = href === activo?.href;
 
       return (
         <Link
@@ -58,9 +67,7 @@ export const DashboardShell = ({ name, email, children, banner, logout }: Props)
   return (
     <div className="flex h-dvh overflow-hidden bg-surface">
       <aside className="hidden w-[264px] shrink-0 flex-col overflow-y-auto border-r border-line bg-white px-4 py-5 lg:flex">
-        <Link href="/" className="mb-6 shrink-0 px-2">
-          <Logo />
-        </Link>
+        <Logo className="mb-6 px-2" />
 
         <div className="mb-5 flex shrink-0 items-center gap-3 rounded-card bg-surface px-3 py-2.5">
           <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-ink text-sm font-bold text-white">

@@ -12,16 +12,20 @@ interface Props {
   subtitle?: string;
 }
 
+/**
+ * El fondo trepa hasta el borde de la pantalla y el header le flota encima;
+ * el texto empieza recién debajo del nav para que nunca quede tapado.
+ */
 export const PageHero = ({ eyebrow, title, subtitle }: Props) => (
-  <section className="relative overflow-hidden bg-surface px-4 py-10 md:px-8 md:py-16 lg:px-[72px]">
+  <section className="bajo-header relative overflow-hidden bg-surface px-4 pb-10 md:px-8 md:pb-16 lg:px-[72px]">
     {/* Decoración: se sale del marco a la derecha y no recibe clics */}
-    <div aria-hidden className="pointer-events-none absolute -right-24 -top-28 hidden h-[420px] w-[420px] md:block">
+    <div aria-hidden className="pointer-events-none absolute -right-24 top-0 hidden h-[520px] w-[520px] md:block">
       <Blob variant={1} className="absolute inset-0 bg-brand-500/90" />
       <Blob variant={3} className="absolute inset-[18%] bg-brand-400" />
       <PawPattern className="text-white" />
     </div>
 
-    <div className="relative mx-auto max-w-[1296px]">
+    <div className="relative mx-auto max-w-[1296px] pt-8 md:pt-10">
       {eyebrow ? (
         <p className="font-display text-base font-bold capitalize text-brand-500">{eyebrow}</p>
       ) : null}

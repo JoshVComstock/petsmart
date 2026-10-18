@@ -238,3 +238,87 @@ export const IconWhatsApp = ({ className = "h-6 w-6" }: IconProps) => (
     <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884a9.82 9.82 0 0 1 6.988 2.896 9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.885-9.885 9.885" />
   </svg>
 );
+
+export const IconScissors = (p: IconProps) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"
+    strokeLinecap="round" strokeLinejoin="round" className={p.className ?? "h-6 w-6"}>
+    <circle cx="6" cy="6" r="3" />
+    <circle cx="6" cy="18" r="3" />
+    <line x1="20" y1="4" x2="8.12" y2="15.88" />
+    <line x1="14.47" y1="14.48" x2="20" y2="20" />
+    <line x1="8.12" y1="8.12" x2="12" y2="12" />
+  </svg>
+);
+
+export const IconMale = (p: IconProps) => (
+  <Svg {...p}>
+    <circle cx="10" cy="14" r="5.2" />
+    <path d="M14.8 9.2 20 4m0 0h-4.6M20 4v4.6" />
+  </Svg>
+);
+
+export const IconFemale = (p: IconProps) => (
+  <Svg {...p}>
+    <circle cx="12" cy="9" r="5.2" />
+    <path d="M12 14.2V21m-2.8-2.6h5.6" />
+  </Svg>
+);
+
+export const IconAlert = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M10.6 3.9 2.5 18a1.6 1.6 0 0 0 1.4 2.4h16.2a1.6 1.6 0 0 0 1.4-2.4L13.4 3.9a1.6 1.6 0 0 0-2.8 0Z" />
+    <path d="M12 9v4" />
+    <circle cx="12" cy="16.6" r="0.9" fill="currentColor" stroke="none" />
+  </Svg>
+);
+
+export const IconCalendar = (p: IconProps) => (
+  <Svg {...p}>
+    <rect x="3" y="5" width="18" height="16" rx="2.5" />
+    <path d="M3 10h18M8 3v4m8-4v4" />
+  </Svg>
+);
+
+export const IconWeight = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M5.6 8h12.8a1.6 1.6 0 0 1 1.57 1.9l-1.7 9A1.6 1.6 0 0 1 16.7 20H7.3a1.6 1.6 0 0 1-1.57-1.1l-1.7-9A1.6 1.6 0 0 1 5.6 8Z" />
+    <path d="M9.2 8a2.8 2.8 0 1 1 5.6 0" />
+    <path d="M12 11.6v4.8m-2.2-2.4h4.4" />
+  </Svg>
+);
+
+export const IconRuler = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M3 16.2 16.2 3l4.8 4.8L7.8 21Z" />
+    <path d="m8.4 7.8 1.8 1.8m-4.2.6 1.8 1.8m4.8-7.2 1.8 1.8" />
+  </Svg>
+);
+
+export const IconCamera = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M3 8.8A2 2 0 0 1 5 6.8h1.9L8.4 4.5h7.2l1.5 2.3H19a2 2 0 0 1 2 2v8.4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z" />
+    <circle cx="12" cy="13" r="3.4" />
+  </Svg>
+);
+
+export const IconPencil = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M16.6 3.9a2 2 0 0 1 2.9 0l.6.6a2 2 0 0 1 0 2.9L8.4 19H4.5v-3.9Z" />
+    <path d="m15.1 5.4 3.5 3.5" />
+  </Svg>
+);
+
+export const IconPrinter = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M7 9V4h10v5" />
+    <path d="M7 19H5a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2" />
+    <path d="M7 15h10v6H7z" />
+  </Svg>
+);
+
+export const IconQr = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4z" />
+    <path d="M14 14h2.5v2.5H14zM19.5 14H20v2.5M14 19.5V20h2.5M19.5 19.5H20" />
+  </Svg>
+);

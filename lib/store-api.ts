@@ -65,6 +65,43 @@ export const apiPatch = <T>(path: string, body: unknown) =>
 export const apiDelete = <T>(path: string) => request<T>(path, { method: "DELETE" });
 
 /**
+ * Multipart para lo que lleva archivo. No se pone Content-Type a mano:
+ * lo arma el runtime con el boundary que corresponde.
+ */
+export const apiForm = async <T>(
+  path: string,
+  form: FormData,
+  method: "POST" | "PATCH" = "POST"
+): Promise<ApiResult<T>> => {
+  const token = await getSessionToken();
+
+  try {
+    const res = await fetch(`${API_URL}/ecommerce${path}`, {
+      method,
+      headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+      body: form,
+      cache: "no-store",
+    });
+
+    const json = (await res.json().catch(() => null)) as { message?: string; data?: T } | null;
+
+    return {
+      ok: res.ok,
+      status: res.status,
+      message: json?.message ?? (res.ok ? "" : "No pudimos completar la operación"),
+      data: json?.data ?? null,
+    };
+  } catch {
+    return {
+      ok: false,
+      status: 0,
+      message: "No pudimos conectar con el servidor. Probá de nuevo.",
+      data: null,
+    };
+  }
+};
+
+/**
  * Ids de los productos favoritos (vacío si no hay sesión).
  *
  * Va envuelto en `cache` a propósito: cada tarjeta del catálogo lo pide para

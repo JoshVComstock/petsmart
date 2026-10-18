@@ -4,6 +4,9 @@ import type { CartLine } from "./cart-store";
 
 export type DeliveryMethod = "delivery" | "pickup";
 
+/** Cómo se paga. El delivery siempre va por adelantado, con QR por el chat. */
+export type PaymentChoice = "qr" | "on_pickup";
+
 export interface CheckoutData {
   /** Código del pedido ya registrado en el sistema, ej. "PED-00042" */
   code?: string
@@ -16,6 +19,8 @@ export interface CheckoutData {
   reference?: string;
   /** Sucursal elegida para retirar (pickup) */
   branchName?: string;
+  /** Pago por QR ahora o al retirar en la tienda */
+  payment: PaymentChoice;
   notes?: string;
 }
 
@@ -41,6 +46,11 @@ export const buildWhatsAppOrder = (
         (data.reference ? `\nReferencia: ${data.reference}` : "")
       : `🏪 *Retiro en tienda*\n` + `Sucursal: ${data.branchName ?? "-"}`;
 
+  const pago =
+    data.payment === "qr"
+      ? "💳 *Pago:* por QR ahora — mandame el QR por acá y te paso el comprobante."
+      : "💵 *Pago:* al retirar en la tienda.";
+
   const message =
     `¡Hola ${STORE.name}! 👋 Quiero hacer este pedido:\n\n` +
     // El código deja el pedido rastreable en los dos lados de la conversación.
@@ -50,7 +60,8 @@ export const buildWhatsAppOrder = (
     `👤 *DATOS*\n` +
     `Nombre: ${data.name}\n` +
     `Teléfono: ${data.phone}\n\n` +
-    `${entrega}` +
+    `${entrega}\n\n` +
+    `${pago}` +
     (data.notes ? `\n\n📝 Nota: ${data.notes}` : "");
 
   return `https://wa.me/${STORE.whatsapp}?text=${encodeURIComponent(message)}`;

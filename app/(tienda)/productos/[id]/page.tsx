@@ -6,32 +6,71 @@ import { Price } from "@/components/ui/Price";
 import { Section } from "@/components/ui/Section";
 import { ProductImage } from "@/components/product/ProductImage";
 import { ProductActions } from "@/components/product/ProductActions";
+import { VariantPicker } from "@/components/product/VariantPicker";
+import { ProductDetails } from "@/components/product/ProductDetails";
+import { ShareButton } from "@/components/product/ShareButton";
 import { ProductGrid } from "@/components/product/ProductGrid";
 import { IconStore, IconTruck } from "@/components/ui/icons";
-import { getProduct, getProducts } from "@/lib/api";
-import { formatMeasure, stockLabel } from "@/lib/format";
+import { getCatalog, getStoreProduct } from "@/lib/api";
+import { STORE } from "@/lib/config";
+import { formatMeasure, formatPrice, stockLabel } from "@/lib/format";
 
 interface Props {
   params: Promise<{ id: string }>;
 }
 
+/**
+ * Vista previa del link en WhatsApp y redes: nombre, foto y precio. Sin esto
+ * el link llega pelado y del otro lado nadie sabe qué producto es.
+ */
 export const generateMetadata = async ({ params }: Props): Promise<Metadata> => {
   const { id } = await params;
-  const product = await getProduct(id);
-  return { title: product?.name ?? "Producto" };
+  const product = await getStoreProduct(id);
+
+  if (!product) return { title: "Producto" };
+
+  const precio = product.price > 0 ? `${formatPrice(product.price)} · ` : "";
+  const description = `${precio}${product.description || `${product.name} en ${STORE.name}.`}`;
+  const url = `/productos/${product.id}`;
+  const imagen = product.photo
+    ? [{ url: product.photo, width: 1200, height: 1200, alt: product.name }]
+    : undefined;
+
+  return {
+    title: product.name,
+    description,
+    alternates: { canonical: url },
+    openGraph: {
+      title:       product.name,
+      description,
+      url,
+      type:        "website",
+      siteName:    STORE.name,
+      images:      imagen,
+    },
+    twitter: {
+      card:        product.photo ? "summary_large_image" : "summary",
+      title:       product.name,
+      description,
+      images:      product.photo ? [product.photo] : undefined,
+    },
+  };
 };
 
 const ProductPage = async ({ params }: Props) => {
   const { id } = await params;
-  const product = await getProduct(id);
+  const product = await getStoreProduct(id);
 
   if (!product) notFound();
 
   const measure = formatMeasure(product);
   const stock = stockLabel(product.stock);
-  const related = await getProducts({
-    category: product.category?.id ? String(product.category.id) : undefined,
-  });
+  const related = (
+    await getCatalog({
+      category: product.category?.id ? String(product.category.id) : undefined,
+      perPage: 5,
+    })
+  ).items.filter((p) => p.id !== product.id);
 
   return (
     <div className="bg-white">
@@ -86,8 +125,8 @@ const ProductPage = async ({ params }: Props) => {
                 <p className="mt-5 text-base leading-relaxed text-ink-body">{product.description}</p>
               ) : null}
 
-              {/* Disponibilidad por sucursal */}
-              {product.branches.length > 0 ? (
+              {/* Disponibilidad por sucursal: en un juego la da cada variante */}
+              {!product.isSet && product.branches.length > 0 ? (
                 <div className="mt-8">
                   <h2 className="font-display text-base font-semibold text-ink">Disponible en</h2>
                   <ul className="mt-4 flex flex-col gap-2">
@@ -107,7 +146,15 @@ const ProductPage = async ({ params }: Props) => {
                 </div>
               ) : null}
 
-              <ProductActions product={product} />
+              {product.isSet ? (
+                <div className="mt-8">
+                  <VariantPicker product={product} />
+                </div>
+              ) : (
+                <ProductActions product={product} />
+              )}
+
+              <ShareButton id={product.id} name={product.name} price={product.price} />
 
               <div className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-ink-soft">
                 <span className="flex items-center gap-2">
@@ -121,6 +168,8 @@ const ProductPage = async ({ params }: Props) => {
               </div>
             </div>
           </div>
+
+          {product.details ? <ProductDetails markdown={product.details} /> : null}
         </div>
       </div>
 

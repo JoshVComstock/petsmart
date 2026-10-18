@@ -107,7 +107,13 @@ export const Footer = () => (
         <p>
           © {new Date().getFullYear()} {STORE.name}. Todos los derechos reservados.
         </p>
-        <p>Coordinamos pago y entrega por WhatsApp.</p>
+        <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
+          <Link href="/terminos" className="transition-colors hover:text-brand-500">
+            Términos y condiciones
+          </Link>
+          <span className="hidden md:inline">·</span>
+          <p>Coordinamos pago y entrega por WhatsApp.</p>
+        </div>
       </div>
     </div>
   </footer>

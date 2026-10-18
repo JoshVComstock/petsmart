@@ -3,10 +3,10 @@
 import { useState } from "react";
 import { IconCart, IconCheck, IconPlus } from "@/components/ui/icons";
 import { useCart } from "@/lib/use-cart";
-import type { Product } from "@/lib/types";
+import type { Comprable } from "@/lib/types";
 
 interface Props {
-  product: Product;
+  product: Comprable;
   branchId?: number;
   quantity?: number;
   variant?: "icon" | "full";
