@@ -5,8 +5,8 @@ import { PawPattern } from "@/components/ui/PawPattern";
 
 /**
  * Marco de las pantallas de cuenta sin sesión (entrar, registrarse,
- * recuperar). Tarjeta blanca de 20px sobre el gris de la tienda, con las
- * manchas naranjas asomando, igual que el resto del sitio.
+ * recuperar). Tarjeta blanca sobre el gris, con las manchas naranjas
+ * asomando. El fondo lo pone el layout del grupo, no esta tarjeta.
  */
 
 interface Props {
@@ -18,7 +18,7 @@ interface Props {
 }
 
 export const AuthShell = ({ eyebrow, title, subtitle, children, footer }: Props) => (
-  <div className="relative overflow-hidden bg-surface px-4 py-12 md:px-8 md:py-20">
+  <div className="relative w-full overflow-hidden px-4 py-10 md:px-8 md:py-14">
     <div aria-hidden className="pointer-events-none absolute -left-32 -top-32 hidden h-[380px] w-[380px] md:block">
       <Blob variant={1} className="absolute inset-0 bg-brand-500/90" />
       <Blob variant={3} className="absolute inset-[20%] bg-brand-400" />

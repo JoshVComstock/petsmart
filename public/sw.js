@@ -1,7 +1,8 @@
-const VERSION = "petsmart-v1";
+const VERSION = "petsmart-v2";
 const STATIC_CACHE = `${VERSION}-static`;
 const OFFLINE_URL = "/offline";
 
+// Al cambiar VERSION se descartan las cachés viejas en el activate.
 self.addEventListener("install", (event) => {
   event.waitUntil(
     caches.open(STATIC_CACHE).then((cache) => cache.addAll([OFFLINE_URL, "/logo-icon.png"]))
@@ -29,7 +30,9 @@ self.addEventListener("fetch", (event) => {
   if (url.origin !== self.location.origin) return;
   if (url.pathname.startsWith("/api")) return;
 
-  if (request.mode === "navigate") {
+  // El HTML y las cargas de RSC siempre van a la red: así un deploy nuevo se
+  // ve en la siguiente navegación, sin esperar a que caduque nada.
+  if (request.mode === "navigate" || url.searchParams.has("_rsc")) {
     event.respondWith(fetch(request).catch(() => caches.match(OFFLINE_URL)));
     return;
   }
