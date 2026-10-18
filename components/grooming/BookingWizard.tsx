@@ -2,7 +2,8 @@
 
 import { useActionState, useMemo, useState, useTransition } from "react";
 import Link from "next/link";
-import { IconCheck, IconClock, IconPaw, IconScissors } from "@/components/ui/icons";
+import { IconCheck, IconClock, IconPaw, IconPlus, IconScissors } from "@/components/ui/icons";
+import { PetForm } from "@/components/pets/PetForm";
 import { SIZE_LABELS } from "@/lib/config";
 import {
   bookAppointmentAction,
@@ -41,15 +42,19 @@ interface Props {
   catalog: GroomingCatalog;
   pets: Pet[];
   initialType: string | null;
+  /** A dónde vuelve al terminar. Por defecto, mis turnos. */
+  doneHref?: string;
 }
 
-export const BookingWizard = ({ catalog, pets, initialType }: Props) => {
+export const BookingWizard = ({ catalog, pets, initialType, doneHref = "/cuenta/turnos" }: Props) => {
   const { packages, extras, schedule, branch } = catalog;
 
   const [step, setStep] = useState(0);
   const [pkg, setPkg] = useState<GroomingPackage | null>(
     packages.find((p) => p.type === initialType) ?? null
   );
+  const [recienCreadas, setRecienCreadas] = useState<Pet[]>([]);
+  const [cargandoMascota, setCargandoMascota] = useState(false);
   const [petId, setPetId] = useState<number | null>(pets[0]?.id ?? null);
   const [size, setSize] = useState<SizeKey | null>(pets[0]?.size ?? null);
   const [extraIds, setExtraIds] = useState<number[]>([]);
@@ -64,7 +69,18 @@ export const BookingWizard = ({ catalog, pets, initialType }: Props) => {
     message: "",
   });
 
-  const pet = pets.find((p) => p.id === petId) ?? null;
+  /**
+   * Las que acaba de cargar acá se suman al instante, sin esperar que el
+   * servidor revalide la ruta. Cuando revalida ya vienen en `pets` y el id
+   * repetido se descarta.
+   */
+  const misMascotas = useMemo(() => {
+    const porId = new Map(pets.map((item) => [item.id, item]));
+    for (const nueva of recienCreadas) if (!porId.has(nueva.id)) porId.set(nueva.id, nueva);
+    return [...porId.values()];
+  }, [pets, recienCreadas]);
+
+  const pet = misMascotas.find((p) => p.id === petId) ?? null;
   const days = useMemo(
     () => nextWorkdays(schedule.workdays, schedule.maxDaysAhead),
     [schedule.workdays, schedule.maxDaysAhead]
@@ -89,15 +105,24 @@ export const BookingWizard = ({ catalog, pets, initialType }: Props) => {
     if (selected.size) setSize(selected.size);
   };
 
+  /** Al cargarla desde acá queda elegida sola: la reserva sigue donde estaba. */
+  const usarNueva = (nueva?: Pet) => {
+    setCargandoMascota(false);
+    if (!nueva) return;
+    setRecienCreadas((prev) => [...prev, nueva]);
+    pickPet(nueva);
+  };
+
   const canContinue =
-    (step === 0 && pkg !== null) ||
-    (step === 1 && pet !== null && size !== null) ||
-    step === 2 ||
-    (step === 3 && startsAt !== null);
+    !cargandoMascota &&
+    ((step === 0 && pkg !== null) ||
+      (step === 1 && pet !== null && size !== null) ||
+      step === 2 ||
+      (step === 3 && startsAt !== null));
 
   if (state.ok) {
     return (
-      <div className="rounded-card border border-line bg-white px-6 py-14 text-center">
+      <div className="rounded-card border border-line bg-white px-6 py-10 text-center">
         <span className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-brand-50 text-brand-500">
           <IconCheck className="h-8 w-8" />
         </span>
@@ -108,16 +133,16 @@ export const BookingWizard = ({ catalog, pets, initialType }: Props) => {
         <p className="mx-auto mt-1 max-w-md text-sm text-ink-soft">
           Te vamos a confirmar por WhatsApp. Podés pagar en la tienda o por QR.
         </p>
-        <div className="mt-7 flex flex-wrap justify-center gap-3">
+        <div className="mt-6 flex flex-wrap justify-center gap-3">
           <Link
-            href="/cuenta/turnos"
-            className="inline-flex h-12 items-center rounded-btn bg-ink px-7 font-display text-base font-semibold text-white"
+            href={doneHref}
+            className="inline-flex h-11 items-center rounded-btn bg-ink px-6 font-display text-sm font-semibold text-white"
           >
             Ver mis turnos
           </Link>
           <Link
             href="/peluqueria"
-            className="inline-flex h-12 items-center rounded-btn border border-line px-7 font-display text-base font-semibold text-ink"
+            className="inline-flex h-11 items-center rounded-btn border border-line px-6 font-display text-sm font-semibold text-ink"
           >
             Volver
           </Link>
@@ -127,9 +152,9 @@ export const BookingWizard = ({ catalog, pets, initialType }: Props) => {
   }
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[1fr_360px] lg:items-start">
-      <div className="rounded-card border border-line bg-white p-5 md:p-7">
-        <ol className="mb-7 flex flex-wrap gap-2">
+    <div className="grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,1fr)_320px] xl:items-start">
+      <div className="min-w-0 rounded-card border border-line bg-white p-4 md:p-5">
+        <ol className="mb-5 flex flex-wrap gap-1.5">
           {PASOS.map((label, index) => (
             <li
               key={label}
@@ -147,6 +172,13 @@ export const BookingWizard = ({ catalog, pets, initialType }: Props) => {
           ))}
         </ol>
 
+        {misMascotas.length === 0 ? (
+          <p className="mb-4 rounded-btn border border-brand-200 bg-brand-50 px-4 py-3 text-sm text-ink-body">
+            Para reservar necesitás una mascota cargada. La podés agregar en el paso 2 sin perder
+            lo que vayas eligiendo.
+          </p>
+        ) : null}
+
         {step === 0 ? (
           <div className="flex flex-col gap-3">
             {packages.map((item) => (
@@ -154,20 +186,20 @@ export const BookingWizard = ({ catalog, pets, initialType }: Props) => {
                 key={item.type}
                 type="button"
                 onClick={() => setPkg(item)}
-                className={`flex items-center gap-4 rounded-card border p-4 text-left transition-colors ${
+                className={`flex flex-col gap-2 rounded-card border p-3 text-left transition-colors sm:flex-row sm:items-center sm:gap-4 ${
                   pkg?.type === item.type
                     ? "border-ink bg-surface"
                     : "border-line hover:bg-surface"
                 }`}
               >
-                <span className="grid h-12 w-12 shrink-0 place-items-center rounded-btn bg-brand-50 text-brand-500">
-                  <IconScissors className="h-6 w-6" />
+                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-btn bg-brand-50 text-brand-500 sm:h-12 sm:w-12">
+                  <IconScissors className="h-5 w-5 sm:h-6 sm:w-6" />
                 </span>
                 <span className="min-w-0 flex-1">
                   <span className="block font-display text-base font-semibold text-ink">
                     {item.title}
                   </span>
-                  <span className="mt-0.5 block line-clamp-1 text-sm text-ink-soft">
+                  <span className="mt-0.5 line-clamp-2 text-sm text-ink-soft sm:line-clamp-1">
                     {item.description}
                   </span>
                 </span>
@@ -181,30 +213,42 @@ export const BookingWizard = ({ catalog, pets, initialType }: Props) => {
 
         {step === 1 ? (
           <div className="flex flex-col gap-5">
-            {pets.length === 0 ? (
+            {cargandoMascota ? (
+              <div className="rounded-card border border-line bg-surface p-3 md:p-4">
+                <div className="mb-4 flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
+                  <h3 className="font-display text-base font-semibold text-ink">
+                    Cargá a tu mascota
+                  </h3>
+                  <p className="text-sm text-ink-soft">Tu reserva queda guardada acá.</p>
+                </div>
+                <PetForm onSaved={usarNueva} onCancel={() => setCargandoMascota(false)} />
+              </div>
+            ) : misMascotas.length === 0 ? (
               <div className="rounded-card border border-line bg-surface p-5 text-center">
                 <IconPaw className="mx-auto h-9 w-9 text-brand-300" />
                 <p className="mt-3 font-display text-base font-semibold text-ink">
                   Todavía no cargaste ninguna mascota
                 </p>
                 <p className="mt-1 text-sm text-ink-soft">
-                  Necesitamos sus datos para reservar el turno.
+                  Cargala acá mismo y seguís con la reserva donde la dejaste.
                 </p>
-                <Link
-                  href="/cuenta/mascotas"
-                  className="mt-4 inline-flex h-11 items-center rounded-btn bg-ink px-6 font-display text-sm font-semibold text-white"
+                <button
+                  type="button"
+                  onClick={() => setCargandoMascota(true)}
+                  className="mt-4 inline-flex h-11 items-center gap-2 rounded-btn bg-ink px-6 font-display text-sm font-semibold text-white"
                 >
+                  <IconPlus className="h-4 w-4" />
                   Agregar mascota
-                </Link>
+                </button>
               </div>
             ) : (
               <div className="flex flex-col gap-2">
-                {pets.map((item) => (
+                {misMascotas.map((item) => (
                   <button
                     key={item.id}
                     type="button"
                     onClick={() => pickPet(item)}
-                    className={`flex items-center gap-3 rounded-card border p-4 text-left transition-colors ${
+                    className={`flex items-center gap-3 rounded-card border p-3 text-left transition-colors ${
                       petId === item.id ? "border-ink bg-surface" : "border-line hover:bg-surface"
                     }`}
                   >
@@ -223,6 +267,17 @@ export const BookingWizard = ({ catalog, pets, initialType }: Props) => {
                     </span>
                   </button>
                 ))}
+
+                <button
+                  type="button"
+                  onClick={() => setCargandoMascota(true)}
+                  className="flex items-center gap-3 rounded-card border border-dashed border-line p-3 text-left font-display text-sm font-semibold text-ink-body transition-colors hover:border-ink-faint hover:bg-surface"
+                >
+                  <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-surface text-brand-500">
+                    <IconPlus className="h-5 w-5" />
+                  </span>
+                  Agregar otra mascota
+                </button>
               </div>
             )}
 
@@ -277,7 +332,7 @@ export const BookingWizard = ({ catalog, pets, initialType }: Props) => {
                         checked ? prev.filter((id) => id !== extra.id) : [...prev, extra.id]
                       )
                     }
-                    className={`flex items-center gap-3 rounded-card border p-4 text-left transition-colors ${
+                    className={`flex items-center gap-3 rounded-card border p-3 text-left transition-colors ${
                       checked ? "border-ink bg-surface" : "border-line hover:bg-surface"
                     }`}
                   >
@@ -384,7 +439,15 @@ export const BookingWizard = ({ catalog, pets, initialType }: Props) => {
           </p>
         ) : null}
 
-        <div className="mt-7 flex items-center justify-between gap-3">
+        <p className="mt-5 text-[11px] text-ink-soft">
+          El precio es estimado y puede variar según el estado del pelo. Al reservar aceptás las{" "}
+          <Link href="/terminos#peluqueria" className="font-semibold text-brand-600 hover:underline">
+            condiciones del servicio
+          </Link>
+          .
+        </p>
+
+        <div className="mt-5 flex items-center justify-between gap-3">
           <button
             type="button"
             disabled={step === 0}
@@ -424,7 +487,7 @@ export const BookingWizard = ({ catalog, pets, initialType }: Props) => {
         </div>
       </div>
 
-      <aside className="rounded-card border border-line bg-white p-5 lg:sticky lg:top-28">
+      <aside className="min-w-0 rounded-card border border-line bg-white p-4 xl:sticky xl:top-6">
         <h2 className="font-display text-lg font-semibold text-ink">Tu turno</h2>
 
         <dl className="mt-4 flex flex-col gap-3 text-sm">

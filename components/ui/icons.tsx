@@ -249,3 +249,76 @@ export const IconScissors = (p: IconProps) => (
     <line x1="8.12" y1="8.12" x2="12" y2="12" />
   </svg>
 );
+
+export const IconMale = (p: IconProps) => (
+  <Svg {...p}>
+    <circle cx="10" cy="14" r="5.2" />
+    <path d="M14.8 9.2 20 4m0 0h-4.6M20 4v4.6" />
+  </Svg>
+);
+
+export const IconFemale = (p: IconProps) => (
+  <Svg {...p}>
+    <circle cx="12" cy="9" r="5.2" />
+    <path d="M12 14.2V21m-2.8-2.6h5.6" />
+  </Svg>
+);
+
+export const IconAlert = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M10.6 3.9 2.5 18a1.6 1.6 0 0 0 1.4 2.4h16.2a1.6 1.6 0 0 0 1.4-2.4L13.4 3.9a1.6 1.6 0 0 0-2.8 0Z" />
+    <path d="M12 9v4" />
+    <circle cx="12" cy="16.6" r="0.9" fill="currentColor" stroke="none" />
+  </Svg>
+);
+
+export const IconCalendar = (p: IconProps) => (
+  <Svg {...p}>
+    <rect x="3" y="5" width="18" height="16" rx="2.5" />
+    <path d="M3 10h18M8 3v4m8-4v4" />
+  </Svg>
+);
+
+export const IconWeight = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M5.6 8h12.8a1.6 1.6 0 0 1 1.57 1.9l-1.7 9A1.6 1.6 0 0 1 16.7 20H7.3a1.6 1.6 0 0 1-1.57-1.1l-1.7-9A1.6 1.6 0 0 1 5.6 8Z" />
+    <path d="M9.2 8a2.8 2.8 0 1 1 5.6 0" />
+    <path d="M12 11.6v4.8m-2.2-2.4h4.4" />
+  </Svg>
+);
+
+export const IconRuler = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M3 16.2 16.2 3l4.8 4.8L7.8 21Z" />
+    <path d="m8.4 7.8 1.8 1.8m-4.2.6 1.8 1.8m4.8-7.2 1.8 1.8" />
+  </Svg>
+);
+
+export const IconCamera = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M3 8.8A2 2 0 0 1 5 6.8h1.9L8.4 4.5h7.2l1.5 2.3H19a2 2 0 0 1 2 2v8.4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z" />
+    <circle cx="12" cy="13" r="3.4" />
+  </Svg>
+);
+
+export const IconPencil = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M16.6 3.9a2 2 0 0 1 2.9 0l.6.6a2 2 0 0 1 0 2.9L8.4 19H4.5v-3.9Z" />
+    <path d="m15.1 5.4 3.5 3.5" />
+  </Svg>
+);
+
+export const IconPrinter = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M7 9V4h10v5" />
+    <path d="M7 19H5a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2" />
+    <path d="M7 15h10v6H7z" />
+  </Svg>
+);
+
+export const IconQr = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4z" />
+    <path d="M14 14h2.5v2.5H14zM19.5 14H20v2.5M14 19.5V20h2.5M19.5 19.5H20" />
+  </Svg>
+);

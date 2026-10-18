@@ -121,3 +121,27 @@ export const resendVerificationAction = async (): Promise<FormState> => {
   const result = await apiPost("/auth/resend-verification");
   return { ok: result.ok, message: result.message };
 };
+
+/**
+ * Canjea el código de 6 dígitos que llega por correo.
+ *
+ * Revalida la cuenta entera: el aviso de "confirmá tu correo" cuelga del
+ * layout, así que tiene que volver a pedirse para que desaparezca.
+ */
+export const verifyCodeAction = async (
+  _prev: FormState,
+  form: FormData
+): Promise<FormState> => {
+  const code = String(form.get("code") ?? "").replace(/\D/g, "");
+
+  if (code.length !== 6) {
+    return { ok: false, message: "El código tiene 6 dígitos" };
+  }
+
+  const clientId = Number(form.get("clientId")) || undefined;
+  const result = await apiPost("/auth/verify-code", { code, ...(clientId && { clientId }) }, null);
+
+  if (result.ok) revalidatePath("/cuenta", "layout");
+
+  return { ok: result.ok, message: result.message };
+};

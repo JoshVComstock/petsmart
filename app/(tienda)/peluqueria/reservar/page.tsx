@@ -2,32 +2,30 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { PageHero } from "@/components/layout/PageHero";
-import { BookingWizard } from "@/components/grooming/BookingWizard";
+import { GuestBooking } from "@/components/grooming/GuestBooking";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { IconScissors } from "@/components/ui/icons";
 import { getGroomingCatalog } from "@/lib/api";
-import { getMyPetsAction } from "@/lib/actions/grooming";
 import { getSession } from "@/lib/session";
 
 export const metadata: Metadata = { title: "Reservar turno" };
 
-const BookingPage = async ({
-  searchParams,
-}: {
-  searchParams: Promise<{ servicio?: string }>;
-}) => {
+/**
+ * Turno para quien no tiene cuenta. Si hay sesión no tiene sentido pedir los
+ * datos de nuevo: se va al panel, donde además se elige el horario exacto.
+ */
+const BookingPage = async () => {
   const session = await getSession();
-  if (!session) redirect("/ingresar?volver=/peluqueria/reservar");
+  if (session) redirect("/cuenta/turnos/reservar");
 
-  const { servicio } = await searchParams;
-  const [catalog, pets] = await Promise.all([getGroomingCatalog(), getMyPetsAction()]);
+  const catalog = await getGroomingCatalog();
 
   return (
     <>
       <PageHero
         eyebrow="Peluquería"
-        title="Reservá tu turno"
-        subtitle="Elegí el servicio, tu mascota y el horario que mejor te quede."
+        title="Pedí tu turno"
+        subtitle="Contanos qué necesita tu mascota y coordinamos el horario por WhatsApp."
       />
 
       <section className="bg-white px-4 py-10 md:px-8 md:py-14 lg:px-[72px]">
@@ -41,17 +39,13 @@ const BookingPage = async ({
               actionLabel="Ver sucursales"
             />
           ) : (
-            <BookingWizard
-              catalog={catalog}
-              pets={pets}
-              initialType={servicio?.toUpperCase() ?? null}
-            />
+            <GuestBooking catalog={catalog} />
           )}
 
           <p className="mt-8 text-center text-sm text-ink-soft">
-            ¿Preferís coordinar por otro medio?{" "}
-            <Link href="/sucursales" className="font-semibold text-brand-500">
-              Mirá nuestras sucursales
+            ¿Ya tenés cuenta?{" "}
+            <Link href="/ingresar?volver=/cuenta/turnos/reservar" className="font-semibold text-brand-500">
+              Entrá y elegí el horario
             </Link>
           </p>
         </div>

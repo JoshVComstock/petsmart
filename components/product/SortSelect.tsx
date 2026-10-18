@@ -10,11 +10,17 @@ import { SORT_OPTIONS, buildCatalogHref, type CatalogParams } from "@/lib/catalo
  * servidor devuelve la lista ya ordenada y no hace falta estado local.
  */
 
-export const SortSelect = ({ params }: { params: CatalogParams }) => {
+interface Props {
+  params: CatalogParams;
+  /** Dónde viven los filtros: la tienda o el pedido de la cuenta. */
+  base?: string;
+}
+
+export const SortSelect = ({ params, base }: Props) => {
   const router = useRouter();
 
   const handleChange = (event: ChangeEvent<HTMLSelectElement>) => {
-    router.push(buildCatalogHref(params, { sort: event.target.value, page: undefined }));
+    router.push(buildCatalogHref(params, { sort: event.target.value, page: undefined }, base));
   };
 
   return (

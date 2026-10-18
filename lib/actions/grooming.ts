@@ -1,9 +1,14 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { apiDelete, apiGet, apiPatch, apiPost } from "@/lib/store-api";
+import { apiDelete, apiForm, apiGet, apiPatch, apiPost } from "@/lib/store-api";
 import type { Availability, Pet } from "@/lib/types";
 import { field, type FormState } from "./types";
+
+/** Igual que FormState, pero devuelve la mascota guardada para poder usarla al instante. */
+export interface PetFormState extends FormState {
+  pet?: Pet;
+}
 
 export const getMyPetsAction = async (): Promise<Pet[]> => {
   const result = await apiGet<Pet[]>("/account/pets");
@@ -38,20 +43,39 @@ const revalidatePets = () => {
 };
 
 export const savePetAction = async (
-  _prev: FormState,
+  _prev: PetFormState,
   form: FormData
-): Promise<FormState> => {
+): Promise<PetFormState> => {
   const payload = petPayload(form);
   if (!payload.name) return { ok: false, message: "El nombre de la mascota es obligatorio" };
 
+  const foto = form.get("photo");
+  const traeFoto = foto instanceof File && foto.size > 0;
+
   const id = Number(form.get("id"));
+  const ruta = id ? `/account/pets/${id}` : "/account/pets";
+  const metodo = id ? "PATCH" : "POST";
+
+  if (traeFoto) {
+    const multipart = new FormData();
+    for (const [clave, valor] of Object.entries(payload)) {
+      if (valor !== undefined) multipart.set(clave, String(valor));
+    }
+    multipart.set("photo", foto);
+
+    const subida = await apiForm<Pet>(ruta, multipart, metodo);
+    if (subida.ok) revalidatePets();
+
+    return { ok: subida.ok, message: subida.message, pet: subida.data ?? undefined };
+  }
+
   const result = id
-    ? await apiPatch(`/account/pets/${id}`, payload)
-    : await apiPost("/account/pets", payload);
+    ? await apiPatch<Pet>(ruta, payload)
+    : await apiPost<Pet>(ruta, payload);
 
   if (result.ok) revalidatePets();
 
-  return { ok: result.ok, message: result.message };
+  return { ok: result.ok, message: result.message, pet: result.data ?? undefined };
 };
 
 export const deletePetAction = async (

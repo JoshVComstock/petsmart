@@ -30,19 +30,17 @@ const Card = ({ appointment }: { appointment: Appointment }) => {
   const estado = ESTADOS[appointment.status];
 
   return (
-    <article className="rounded-card border border-line bg-white p-5">
+    <article className="rounded-card border border-line bg-white p-4">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="flex items-start gap-3">
-          <span className="grid h-11 w-11 shrink-0 place-items-center rounded-btn bg-brand-50 text-brand-500">
-            <IconScissors className="h-5 w-5" />
+          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-btn bg-brand-50 text-brand-500">
+            <IconScissors className="h-4 w-4" />
           </span>
           <div className="min-w-0">
-            <p className="font-display text-base font-semibold capitalize text-ink">
+            <p className="font-display text-sm font-semibold capitalize text-ink">
               {formatDate(appointment.scheduledAt)}
             </p>
-            <p className="mt-0.5 text-sm text-ink-soft">
-              {appointment.durationMin} minutos
-            </p>
+            <p className="mt-0.5 text-xs text-ink-soft">{appointment.durationMin} min</p>
           </div>
         </div>
 
@@ -53,8 +51,8 @@ const Card = ({ appointment }: { appointment: Appointment }) => {
         </span>
       </div>
 
-      <dl className="mt-5 grid gap-3 sm:grid-cols-2">
-        <div className="flex items-center gap-2 text-sm">
+      <dl className="mt-3 grid gap-2 sm:grid-cols-2">
+        <div className="flex items-center gap-2 text-xs">
           <IconPaw className="h-4 w-4 shrink-0 text-ink-faint" />
           <span className="text-ink-body">
             {appointment.pet?.name ?? "Sin mascota"}
@@ -63,7 +61,7 @@ const Card = ({ appointment }: { appointment: Appointment }) => {
         </div>
 
         {appointment.branch ? (
-          <div className="flex items-center gap-2 text-sm">
+          <div className="flex items-center gap-2 text-xs">
             <IconMapPin className="h-4 w-4 shrink-0 text-ink-faint" />
             <span className="text-ink-body">{appointment.branch.name}</span>
           </div>
@@ -71,11 +69,11 @@ const Card = ({ appointment }: { appointment: Appointment }) => {
       </dl>
 
       {appointment.service ? (
-        <p className="mt-4 text-sm text-ink-soft">{appointment.service.description}</p>
+        <p className="mt-3 line-clamp-2 text-xs text-ink-soft">{appointment.service.description}</p>
       ) : null}
 
       {appointment.extras.length > 0 ? (
-        <ul className="mt-3 flex flex-wrap gap-1.5">
+        <ul className="mt-2 flex flex-wrap gap-1.5">
           {appointment.extras.map((extra) => (
             <li
               key={extra.id}
@@ -88,13 +86,13 @@ const Card = ({ appointment }: { appointment: Appointment }) => {
       ) : null}
 
       {appointment.notes ? (
-        <p className="mt-3 rounded-btn bg-surface px-4 py-2.5 text-sm text-ink-body">
+        <p className="mt-2 rounded-btn bg-surface px-3 py-2 text-xs text-ink-body">
           {appointment.notes}
         </p>
       ) : null}
 
-      <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-line pt-4">
-        <span className="font-display text-lg font-semibold text-ink">
+      <div className="mt-3 flex flex-wrap items-center justify-between gap-3 border-t border-line pt-3">
+        <span className="font-display text-base font-semibold text-ink">
           {appointment.estimatedPrice?.toFixed(2) ?? "—"} Bs
         </span>
 
@@ -117,22 +115,22 @@ const AppointmentsPage = async () => {
         icon={<IconScissors className="h-7 w-7" />}
         title="Todavía no reservaste ningún turno"
         message="Elegí un servicio de peluquería y reservá el horario que prefieras."
-        actionHref="/peluqueria"
-        actionLabel="Ver peluquería"
+        actionHref="/cuenta/turnos/reservar"
+        actionLabel="Reservar un turno"
       />
     );
   }
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-6">
       <section>
         <div className="flex items-center justify-between gap-3">
-          <h2 className="flex items-center gap-2 font-display text-xl font-semibold text-ink">
+          <h2 className="flex items-center gap-2 font-display text-lg font-semibold text-ink">
             <IconClock className="h-5 w-5 text-brand-500" />
             Próximos turnos
           </h2>
           <Link
-            href="/peluqueria/reservar"
+            href="/cuenta/turnos/reservar"
             className="rounded-btn bg-ink px-5 py-2.5 font-display text-sm font-semibold text-white"
           >
             Reservar otro
@@ -144,7 +142,7 @@ const AppointmentsPage = async () => {
             No tenés turnos próximos.
           </p>
         ) : (
-          <div className="mt-4 flex flex-col gap-4">
+          <div className="mt-3 flex flex-col gap-3">
             {proximos.map((item) => (
               <Card key={item.id} appointment={item} />
             ))}
@@ -154,8 +152,8 @@ const AppointmentsPage = async () => {
 
       {pasados.length > 0 ? (
         <section>
-          <h2 className="font-display text-xl font-semibold text-ink">Historial</h2>
-          <div className="mt-4 flex flex-col gap-4">
+          <h2 className="font-display text-lg font-semibold text-ink">Historial</h2>
+          <div className="mt-3 flex flex-col gap-3">
             {pasados.map((item) => (
               <Card key={item.id} appointment={item} />
             ))}

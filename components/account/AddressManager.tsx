@@ -2,6 +2,7 @@
 
 import { useActionState, useState, useTransition } from "react";
 import { FormField } from "./FormField";
+import { MapPicker } from "./MapPicker";
 import { FormMessage } from "./FormMessage";
 import { SubmitButton } from "./SubmitButton";
 import { IconMapPin, IconPlus, IconTrash } from "@/components/ui/icons";
@@ -118,12 +119,7 @@ export const AddressManager = ({ addresses }: { addresses: Address[] }) => {
             placeholder="Portón verde, frente a la plaza"
             defaultValue={draft.reference ?? ""}
           />
-          <FormField
-            label="Link de Google Maps"
-            name="mapsUrl"
-            placeholder="https://maps.app.goo.gl/…"
-            defaultValue={draft.mapsUrl ?? ""}
-          />
+          <MapPicker name="mapsUrl" defaultValue={draft.mapsUrl} />
 
           <label className="flex items-center gap-2.5 text-sm text-ink-body">
             <input

@@ -4,10 +4,11 @@ import Link from "next/link";
 import { useActionState, useState } from "react";
 import { useFormStatus } from "react-dom";
 import type { ReactNode } from "react";
-import { IconCheck, IconStore, IconTruck, IconWhatsApp } from "@/components/ui/icons";
+import { IconCheck, IconQr, IconStore, IconTruck, IconWhatsApp } from "@/components/ui/icons";
 import { formatPrice } from "@/lib/format";
 import { useCart } from "@/lib/use-cart";
 import { createOrderAction, type CheckoutState } from "@/lib/actions/order";
+import type { PaymentChoice } from "@/lib/whatsapp";
 import type { Address, Branch, StoreClient } from "@/lib/types";
 
 /**
@@ -78,6 +79,7 @@ const IDLE: CheckoutState = { ok: false, message: "" };
 export const Checkout = ({ branches, client, addresses }: Props) => {
   const { lines, subtotal, clear } = useCart();
   const [isPickup, setIsPickup] = useState(false);
+  const [payment, setPayment] = useState<PaymentChoice>("qr");
 
   const defaultAddress = addresses.find((address) => address.isDefault) ?? addresses[0] ?? null;
   const [addressId, setAddressId] = useState<number | null>(defaultAddress?.id ?? null);
@@ -124,6 +126,24 @@ export const Checkout = ({ branches, client, addresses }: Props) => {
           className="mt-3 block text-sm text-ink-soft transition-colors hover:text-brand-500"
         >
           {client ? "Ver mis pedidos" : "Seguir comprando"}
+        </Link>
+      </div>
+    );
+  }
+
+  // Con cuenta sin confirmar el backend rechaza el pedido: mejor decirlo acá.
+  if (client && !client.emailVerified) {
+    return (
+      <div className="rounded-card border border-brand-200 bg-brand-50 p-5">
+        <p className="font-display text-sm font-semibold text-ink">Confirmá tu correo primero</p>
+        <p className="mt-1 text-sm text-ink-body">
+          Te mandamos un código de 6 dígitos. Confirmalo y seguís con el pedido.
+        </p>
+        <Link
+          href="/cuenta"
+          className="mt-4 flex h-11 items-center justify-center rounded-btn bg-ink font-display text-sm font-semibold text-white transition-colors hover:bg-brand-500"
+        >
+          Ir a confirmar
         </Link>
       </div>
     );
@@ -256,6 +276,43 @@ export const Checkout = ({ branches, client, addresses }: Props) => {
         />
       </div>
 
+      {/* Cómo se paga. El delivery va pago por adelantado, sí o sí. */}
+      <fieldset className="mt-5">
+        <legend className="font-display text-xs font-semibold text-ink-soft">
+          ¿Cómo pagás?
+        </legend>
+
+        {isPickup ? (
+          <div className="mt-3 grid grid-cols-2 gap-3">
+            <MethodOption
+              active={payment === "qr"}
+              icon={<IconQr className="h-6 w-6" />}
+              title="Ahora por QR"
+              subtitle="Te lo mandamos al chat"
+              onClick={() => setPayment("qr")}
+            />
+            <MethodOption
+              active={payment === "on_pickup"}
+              icon={<IconStore className="h-6 w-6" />}
+              title="Al recoger"
+              subtitle="Pagás en la tienda"
+              onClick={() => setPayment("on_pickup")}
+            />
+          </div>
+        ) : (
+          <p className="mt-3 flex items-start gap-3 rounded-btn bg-surface px-4 py-3 text-sm text-ink-body">
+            <IconQr className="mt-0.5 h-5 w-5 shrink-0 text-brand-500" />
+            <span>
+              El delivery se paga por adelantado.{" "}
+              <strong className="text-ink">Te mandamos el QR por el chat</strong> y salimos
+              apenas nos pases el comprobante.
+            </span>
+          </p>
+        )}
+      </fieldset>
+
+      <input type="hidden" name="payment" value={isPickup ? payment : "qr"} />
+
       {state.message && !state.ok ? (
         <p role="alert" className="mt-5 rounded-btn bg-danger/10 px-4 py-3 text-sm text-danger">
           {state.message}
@@ -272,8 +329,11 @@ export const Checkout = ({ branches, client, addresses }: Props) => {
       <CheckoutSubmit />
 
       <p className="mt-3 text-center text-xs text-ink-soft">
-        Registramos tu pedido y abrimos WhatsApp con el detalle listo. Confirmamos stock y
-        coordinamos el pago.
+        Al enviar aceptás los{" "}
+        <Link href="/terminos" className="font-semibold text-brand-500 hover:underline">
+          términos y condiciones
+        </Link>
+        . Confirmamos stock y coordinamos el pago.
       </p>
     </form>
   );

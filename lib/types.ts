@@ -38,6 +38,85 @@ export interface Product {
 }
 
 /** Filtros del catálogo */
+export interface CatalogItem {
+  id: number;
+  name: string;
+  photo: string | null;
+  unitOfMeasure: string | null;
+  measure: number | null;
+  /** Version liviana: sin direccion ni telefono, eso vive en el detalle. */
+  branches: { id: number; name: string; quantity: number }[];
+  category: { id: number; name: string } | null;
+  brand: { id: number; name: string } | null;
+  price: number;
+  oldPrice: number | null;
+  discount: number;
+  offer: { title: string | null; endsAt: string; percent: number } | null;
+  stock: number;
+  /** Tiene variantes: en la tarjeta se muestra una sola vez. */
+  isSet: boolean;
+  variantCount: number;
+  /** El precio es el mas barato de sus variantes, no uno fijo. */
+  priceFrom: boolean;
+}
+
+export interface CatalogPage {
+  items: CatalogItem[];
+  page: number;
+  perPage: number;
+  total: number;
+  totalPages: number;
+  hasMore: boolean;
+}
+
+export interface VariantOption {
+  id: number;
+  name: string;
+  photo: string | null;
+  values: Record<string, string>;
+  stock: number;
+  branches: BranchStock[];
+  price: number | null;
+  oldPrice: number | null;
+  discount: number;
+  offer: { title: string | null; endsAt: string; percent: number } | null;
+}
+
+export interface VariantAxis {
+  name: string;
+  values: string[];
+}
+
+export interface StoreProduct extends Product {
+  /** Ficha larga en Markdown, editable desde el ERP. */
+  details: string | null;
+  isSet: boolean;
+  priceFrom: boolean;
+  axes: VariantAxis[];
+  variants: VariantOption[];
+  offer: { title: string | null; endsAt: string; percent: number } | null;
+}
+
+/** Lo minimo que hace falta para medir o meter algo al carrito. */
+export interface Medible {
+  measure: number | null;
+  unitOfMeasure: string | null;
+}
+
+export interface Comprable {
+  id: number;
+  name: string;
+  photo: string | null;
+  price: number;
+  stock: number;
+  branches: { id: number; name: string; quantity: number }[];
+}
+
+export interface BrandFacet {
+  name: string;
+  count: number;
+}
+
 export interface ProductFilters {
   search?: string;
   category?: string;

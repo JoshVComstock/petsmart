@@ -31,6 +31,14 @@ export const STORE = {
 export const API_URL =
   process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3000/api";
 
+/**
+ * Dominio público. Lo necesita Next para armar las URL absolutas de las
+ * vistas previas: sin esto, al compartir un link por WhatsApp la imagen
+ * no carga porque viaja como ruta relativa.
+ */
+export const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.petsmartbolivia.com";
+
 export const CONTACT = {
   phone: DEFAULT_BRANCH.phone,
   phoneLabel: `+591 ${DEFAULT_BRANCH.phone}`,

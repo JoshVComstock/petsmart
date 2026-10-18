@@ -1,14 +1,15 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { IconHeart, IconHeartFilled } from "@/components/ui/icons";
+import { mostrarToast } from "@/components/ui/Toast";
 import { toggleFavoriteAction } from "@/lib/actions/account";
 
 /**
  * Corazón de la tarjeta, tal cual el template.
  *
- * Sin sesión manda a ingresar en vez de fallar en silencio. Con sesión pinta
+ * Sin cuenta avisa que hay que registrarse y deja el link a mano, en vez de
+ * sacar a la persona de la página a mitad de la compra. Con sesión pinta
  * el cambio al instante y lo confirma contra el servidor; si el servidor dice
  * que no, vuelve atrás. Nada de useEffect: solo estado local y una transición.
  */
@@ -28,13 +29,17 @@ export const FavoriteButton = ({
   isLoggedIn,
   className = "",
 }: Props) => {
-  const router = useRouter();
   const [favorite, setFavorite] = useState(isFavorite);
   const [pending, startTransition] = useTransition();
 
   const handleClick = () => {
     if (!isLoggedIn) {
-      router.push(`/ingresar?volver=${encodeURIComponent(`/productos/${productId}`)}`);
+      mostrarToast({
+        mensaje:   "Creá tu cuenta para guardar favoritos",
+        detalle:   `Así “${productName}” te espera la próxima vez.`,
+        href:      `/crear-cuenta?volver=${encodeURIComponent(`/productos/${productId}`)}`,
+        hrefLabel: "Crear cuenta o ingresar",
+      });
       return;
     }
 

@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ProductImage } from "./ProductImage";
 import { formatPrice } from "@/lib/format";
 import { buildCatalogHref, type CatalogParams } from "@/lib/catalog";
-import type { Branch, Category, Product } from "@/lib/types";
+import type { Branch, CatalogItem, Category } from "@/lib/types";
 
 /**
  * Columna de filtros del template (306px). Cada opción es un link:
@@ -59,7 +59,7 @@ interface Props {
   categories: Category[];
   brands: { name: string; count: number }[];
   branches: Branch[];
-  popular: Product[];
+  popular: CatalogItem[];
   params: CatalogParams;
 }
 

@@ -1,11 +1,11 @@
 import { ProductCard } from "./ProductCard";
 import { EmptyState } from "@/components/ui/EmptyState";
-import type { Product } from "@/lib/types";
+import type { CatalogItem } from "@/lib/types";
 
 /** Grilla de productos. `columns` sigue las dos densidades del diseño. */
 
 interface Props {
-  products: Product[];
+  products: CatalogItem[];
   /** 3 en el catálogo con sidebar, 4 en las secciones a todo el ancho */
   columns?: 3 | 4;
   emptyTitle?: string;

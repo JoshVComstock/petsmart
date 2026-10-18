@@ -7,20 +7,25 @@ import { apiPost } from "@/lib/store-api";
 export const metadata: Metadata = { title: "Confirmar correo" };
 
 interface Props {
-  searchParams: Promise<{ token?: string }>;
+  searchParams: Promise<{ token?: string; id?: string; code?: string }>;
 }
 
 /**
- * Aterrizaje del link del correo. Se canjea el token acá mismo, en el
- * servidor, y se muestra el resultado: es una página que se abre una sola vez
- * desde el mail, no hace falta ni formulario ni estado en el cliente.
+ * Aterrizaje del link del correo. Se canjea acá mismo, en el servidor, y se
+ * muestra el resultado: es una página que se abre una sola vez desde el mail,
+ * no hace falta ni formulario ni estado en el cliente.
+ *
+ * Acepta el código nuevo (?id&code) y los links viejos con ?token, para que
+ * los correos ya enviados sigan funcionando.
  */
 const VerifyPage = async ({ searchParams }: Props) => {
-  const { token } = await searchParams;
+  const { token, id, code } = await searchParams;
 
-  const result = token
-    ? await apiPost("/auth/verify", { token }, null)
-    : { ok: false, message: "El link está incompleto." };
+  const result = code
+    ? await apiPost("/auth/verify-code", { code, clientId: Number(id) || undefined }, null)
+    : token
+      ? await apiPost("/auth/verify", { token }, null)
+      : { ok: false, message: "El link está incompleto." };
 
   return (
     <AuthShell
@@ -45,7 +50,7 @@ const VerifyPage = async ({ searchParams }: Props) => {
           href={result.ok ? "/cuenta" : "/cuenta/perfil"}
           className="flex h-[52px] w-full items-center justify-center rounded-btn bg-ink font-display text-base font-semibold text-white transition-colors hover:bg-brand-500"
         >
-          {result.ok ? "Ir a mi cuenta" : "Pedir un link nuevo"}
+          {result.ok ? "Ir a mi cuenta" : "Pedir un código nuevo"}
         </Link>
       </div>
     </AuthShell>

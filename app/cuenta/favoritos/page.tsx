@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import { ProductGrid } from "@/components/product/ProductGrid";
 import { apiGet } from "@/lib/store-api";
-import type { Product } from "@/lib/types";
+import type { CatalogItem } from "@/lib/types";
 
 export const metadata: Metadata = { title: "Favoritos" };
 
 const FavoritesPage = async () => {
-  const result = await apiGet<Product[]>("/account/favorites");
+  const result = await apiGet<CatalogItem[]>("/account/favorites");
   const products = result.data ?? [];
 
   return (

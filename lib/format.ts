@@ -1,12 +1,12 @@
 import { STORE } from "./config";
-import type { Product } from "./types";
+import type { Medible } from "./types";
 
 /** 34.5 → "Bs 34.50" */
 export const formatPrice = (value: number): string =>
   `${STORE.currency} ${value.toFixed(2)}`;
 
 /** "1.5 kg" a partir de measure + unitOfMeasure */
-export const formatMeasure = (product: Product): string | null => {
+export const formatMeasure = (product: Medible): string | null => {
   if (!product.measure) return null;
   return `${product.measure}${product.unitOfMeasure ? ` ${product.unitOfMeasure}` : ""}`;
 };

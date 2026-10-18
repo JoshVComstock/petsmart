@@ -5,7 +5,7 @@ import type { ReactNode } from "react";
 import { AddToCartButton } from "./AddToCartButton";
 import { IconMinus, IconPlus } from "@/components/ui/icons";
 import { formatPrice } from "@/lib/format";
-import type { Product } from "@/lib/types";
+import type { Comprable } from "@/lib/types";
 
 /**
  * Selector de cantidad + agregar. En mobile además queda una barra fija
@@ -31,7 +31,7 @@ const StepButton = ({ children, label, onClick, disabled }: StepProps) => (
   </button>
 );
 
-export const ProductActions = ({ product }: { product: Product }) => {
+export const ProductActions = ({ product }: { product: Comprable }) => {
   const [quantity, setQuantity] = useState(1);
   const max = Math.max(1, product.stock);
 

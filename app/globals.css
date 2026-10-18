@@ -66,6 +66,23 @@ html {
   -webkit-text-size-adjust: 100%;
 }
 
+/* Alto del header flotante: lo usa el main para no quedar tapado. */
+:root {
+  --header-h: 130px;
+}
+
+@media (min-width: 768px) {
+  :root {
+    --header-h: 166px;
+  }
+}
+
+/* La portada sube hasta el borde y el header le flota encima. */
+.bajo-header {
+  margin-top: calc(var(--header-h) * -1);
+  padding-top: var(--header-h);
+}
+
 body {
   background: var(--color-surface);
   color: var(--color-ink);
@@ -95,5 +112,88 @@ body {
   *::after {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+/* ─── Impresión del carnet de mascota ───────────────────────────────
+   El botón que la dispara está comentado en PetsManager: la máquina
+   queda lista y se enciende descomentando esas líneas.                */
+.no-imprimir {
+  display: revert;
+}
+
+@media print {
+  .no-imprimir {
+    display: none !important;
+  }
+
+  body.imprimiendo-carnet * {
+    visibility: hidden;
+  }
+
+  body.imprimiendo-carnet .carnet-imprimible,
+  body.imprimiendo-carnet .carnet-imprimible * {
+    visibility: visible;
+  }
+
+  body.imprimiendo-carnet .carnet-imprimible {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    box-shadow: none;
+  }
+}
+
+@page {
+  margin: 12mm;
+}
+
+/* ─── Catálogo: la grilla scrollea sola ─────────────────────────────
+   En pantalla ancha los filtros se quedan quietos y solo la lista de
+   productos se mueve, así "Ver más" no corre la página de lugar.      */
+@media (min-width: 1024px) {
+  .caja-productos {
+    max-height: calc(100dvh - var(--header-h) - 1.5rem);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding-right: 0.5rem;
+  }
+
+  /* Dentro del panel de la cuenta no hay header flotante: manda la altura. */
+  .caja-productos-panel {
+    max-height: calc(100dvh - 9rem);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding-right: 0.5rem;
+  }
+
+  .caja-productos-panel::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .caja-productos-panel::-webkit-scrollbar-thumb {
+    background: var(--color-line);
+    border-radius: 999px;
+  }
+
+  .caja-filtros {
+    position: sticky;
+    top: calc(var(--header-h) + 1rem);
+    max-height: calc(100dvh - var(--header-h) - 2rem);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    align-self: start;
+  }
+
+  .caja-productos::-webkit-scrollbar,
+  .caja-filtros::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .caja-productos::-webkit-scrollbar-thumb,
+  .caja-filtros::-webkit-scrollbar-thumb {
+    background: var(--color-line);
+    border-radius: 999px;
   }
 }
