@@ -1,9 +1,9 @@
 import type { Metadata, Viewport } from "next";
-import Script from "next/script";
 import { Inter, Poppins } from "next/font/google";
 import { SITE_URL, STORE } from "@/lib/config";
 import "./globals.css";
 import { Toaster } from "@/components/ui/Toast";
+import { AutoUpdate } from "@/components/layout/AutoUpdate";
 
 // Poppins para títulos, menú y botones; Inter para los textos largos.
 // Son las dos familias que usa el diseño.
@@ -65,16 +65,7 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => (
 
       <Toaster />
 
-      {/*
-        En desarrollo el service worker cachea los chunks de Turbopack y la
-        app queda sirviendo código viejo: solo se registra en producción, y
-        en dev se desregistra el que haya quedado instalado.
-      */}
-      <Script id="sw-register" strategy="afterInteractive">
-        {process.env.NODE_ENV === "production"
-          ? `if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js').catch(function(){})}`
-          : `if('serviceWorker' in navigator){navigator.serviceWorker.getRegistrations().then(function(rs){rs.forEach(function(r){r.unregister()})});if(window.caches){caches.keys().then(function(ks){ks.forEach(function(k){caches.delete(k)})})}}`}
-      </Script>
+      <AutoUpdate />
     </body>
   </html>
 );
