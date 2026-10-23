@@ -30,13 +30,14 @@ export const AccountButton = async () => {
       className="relative grid h-10 w-10 shrink-0 place-items-center rounded-full bg-ink font-display text-sm font-semibold uppercase text-white transition-colors hover:bg-brand-500"
     >
       {session.name.charAt(0)}
-      {/* Punto naranja mientras el correo no esté confirmado */}
+      {/* VERIFICACION DE CORREO EN PAUSA: sin aviso de confirmación no hay nada que señalar.
       {!session.emailVerified ? (
         <span
           aria-hidden
           className="absolute right-0 top-0 h-3 w-3 rounded-full border-2 border-white bg-brand-500"
         />
       ) : null}
+      */}
     </Link>
   );
 };

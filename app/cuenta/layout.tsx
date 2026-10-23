@@ -3,7 +3,8 @@ import type { ReactNode } from "react";
 import { redirect } from "next/navigation";
 import { DashboardShell } from "@/components/account/DashboardShell";
 import { LogoutButton } from "@/components/account/LogoutButton";
-import { VerifyBanner } from "@/components/account/VerifyBanner";
+// VERIFICACION DE CORREO EN PAUSA
+// import { VerifyBanner } from "@/components/account/VerifyBanner";
 import { getSession } from "@/lib/session";
 
 export const metadata: Metadata = { title: "Mi cuenta" };
@@ -18,7 +19,8 @@ const AccountLayout = async ({ children }: { children: ReactNode }) => {
       name={session.name}
       email={session.email}
       logout={<LogoutButton />}
-      banner={!session.emailVerified ? <VerifyBanner email={session.email} /> : undefined}
+      // VERIFICACION DE CORREO EN PAUSA: el aviso pedía el código de 6 dígitos.
+      // banner={!session.emailVerified ? <VerifyBanner email={session.email} /> : undefined}
     >
       {children}
     </DashboardShell>

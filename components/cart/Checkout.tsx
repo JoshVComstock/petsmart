@@ -131,23 +131,20 @@ export const Checkout = ({ branches, client, addresses }: Props) => {
     );
   }
 
-  // Con cuenta sin confirmar el backend rechaza el pedido: mejor decirlo acá.
-  if (client && !client.emailVerified) {
-    return (
-      <div className="rounded-card border border-brand-200 bg-brand-50 p-5">
-        <p className="font-display text-sm font-semibold text-ink">Confirmá tu correo primero</p>
-        <p className="mt-1 text-sm text-ink-body">
-          Te mandamos un código de 6 dígitos. Confirmalo y seguís con el pedido.
-        </p>
-        <Link
-          href="/cuenta"
-          className="mt-4 flex h-11 items-center justify-center rounded-btn bg-ink font-display text-sm font-semibold text-white transition-colors hover:bg-brand-500"
-        >
-          Ir a confirmar
-        </Link>
-      </div>
-    );
-  }
+  // VERIFICACION DE CORREO EN PAUSA: el backend ya no rechaza el pedido por correo sin confirmar,
+  // así que esta pantalla no va. Descomentar junto con el gate del backend.
+  //
+  // if (client && !client.emailVerified) {
+  //   return (
+  //     <div className="rounded-card border border-brand-200 bg-brand-50 p-5">
+  //       <p className="font-display text-sm font-semibold text-ink">Confirmá tu correo primero</p>
+  //       <p className="mt-1 text-sm text-ink-body">
+  //         Te mandamos un código de 6 dígitos. Confirmalo y seguís con el pedido.
+  //       </p>
+  //       <Link href="/cuenta" className="...">Ir a confirmar</Link>
+  //     </div>
+  //   );
+  // }
 
   if (lines.length === 0) return null;
 

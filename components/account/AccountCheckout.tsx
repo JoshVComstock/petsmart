@@ -121,23 +121,19 @@ export const AccountCheckout = ({ branches, client, addresses }: Props) => {
     );
   }
 
-  if (!client.emailVerified) {
-    return (
-      <div className="rounded-card border border-brand-200 bg-brand-50 p-5">
-        <p className="font-display text-sm font-semibold text-ink">Confirmá tu correo primero</p>
-        <p className="mt-1 text-sm text-ink-body">
-          Para hacer pedidos desde tu cuenta necesitamos confirmar tu correo. Escribí el código
-          de 6 dígitos que te mandamos; está en el aviso de arriba.
-        </p>
-        <Link
-          href="/cuenta"
-          className="mt-4 flex h-11 items-center justify-center rounded-btn bg-ink font-display text-sm font-semibold text-white transition-colors hover:bg-brand-500"
-        >
-          Ir a confirmar
-        </Link>
-      </div>
-    );
-  }
+  // VERIFICACION DE CORREO EN PAUSA: pedir desde la cuenta no exige el código.
+  //
+  // if (!client.emailVerified) {
+  //   return (
+  //     <div className="rounded-card border border-brand-200 bg-brand-50 p-5">
+  //       <p className="font-display text-sm font-semibold text-ink">Confirmá tu correo primero</p>
+  //       <p className="mt-1 text-sm text-ink-body">
+  //         Para hacer pedidos desde tu cuenta necesitamos confirmar tu correo.
+  //       </p>
+  //       <Link href="/cuenta" className="...">Ir a confirmar</Link>
+  //     </div>
+  //   );
+  // }
 
   if (lines.length === 0) {
     return (

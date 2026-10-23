@@ -24,7 +24,10 @@ export const ProfileForm = ({ client }: { client: StoreClient }) => {
         <span className="font-display text-xs font-semibold text-ink-soft">Correo</span>
         <p className="mt-1.5 rounded-btn border border-line bg-surface px-4 py-3 text-sm text-ink-soft">
           {client.email}
+          {/* VERIFICACION DE CORREO EN PAUSA: sin forma de confirmar, el aviso
+              solo confunde.
           {client.emailVerified ? " · confirmado" : " · sin confirmar"}
+          */}
         </p>
         <span className="mt-1.5 block text-xs text-ink-soft">
           El correo es tu usuario, no se puede cambiar desde acá. Escribinos si lo necesitás.
